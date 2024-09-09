@@ -23,6 +23,12 @@ class Events_DB:
         id = self._cursor.lastrowid
         return id
     
+    def remove_event(self, event_id:int):
+        self._cursor.execute("""DELETE FROM Events WHERE id = ?""", (event_id, ))
+        self._connection.commit()
+        print(f"Deleted event with id {event_id}")
+        return True
+    
     def add_server(self, server_id:int):
         self._cursor.execute("""INSERT INTO Servers(server_id, channel_id, notification_time, channel_id)
                              VALUES(?, NULL, NULL, NULL)""", (server_id, ))
@@ -60,7 +66,7 @@ class Events_DB:
         else:
             current_time = datetime.now(UTC)
             next_event.time = datetime.strptime(next_event.time, '%Y-%m-%d %H:%M:%S%z')
-            if (next_event.time-current_time < timedelta(minutes=server.notification_time)):
+            if (next_event.time-current_time) <= timedelta(minutes=server.notification_time):
                 return (next_event, server)
             else:
                 return None

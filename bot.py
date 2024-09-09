@@ -65,6 +65,7 @@ async def check_upcoming_events():
         if upcoming_event != None:
             channel = guild.get_channel(server.channel_id)
             await channel.send(f"There is an upcoming event in <t:{int(upcoming_event.time.timestamp())}:R>: {upcoming_event.message} <@&{server.role_id}>")
+            events_db.remove_event(upcoming_event.id)
             
         
 
